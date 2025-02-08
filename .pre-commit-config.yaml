@@ -1,0 +1,32 @@
+default_install_hook_types: [pre-commit, pre-push, commit-msg]
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-ast # Valid python files.
+      - id: check-yaml
+      - id: check-json
+      - id: check-docstring-first
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+      - id: detect-private-key
+      - id: check-added-large-files
+      - id: check-merge-conflict
+        args: [--assume-in-merge]
+
+  # See https://www.conventionalcommits.org/en/v1.0.0/ for more info.
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.2.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [feat, fix, test, docs, chore, style]
+
+  # See https://docs.astral.sh/ruff/ for more info.
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.7.2
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
