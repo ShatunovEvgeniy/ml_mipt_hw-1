@@ -80,7 +80,6 @@ fsspec[http]==2025.2.0
     # via
     #   dvc
     #   scmrepo
-    #   torch
 funcy==2.0
     # via
     #   dvc
@@ -113,11 +112,11 @@ multidict==6.1.0
 nanotime==0.5.2
     # via dvc
 networkx==3.4.2
+    # via dvc
+numpy==1.24.1
     # via
-    #   dvc
-    #   torch
-numpy==2.2.2
-    # via torchvision
+    #   -r requirements.in
+    #   torchvision
 nvidia-cublas-cu11==11.10.3.66
     # via
     #   nvidia-cudnn-cu11
