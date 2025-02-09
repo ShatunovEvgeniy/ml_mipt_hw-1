@@ -1,12 +1,7 @@
-import os
-
 import pytest
 import torch
 
 from src.train import compute_accuracy
-
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-os.chdir(project_root)
 
 
 def test_arange_elems() -> None:
