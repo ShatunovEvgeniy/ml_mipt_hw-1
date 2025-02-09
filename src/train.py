@@ -43,7 +43,7 @@ def config_train_process(
 
     model = resnet18(
         pretrained=False,
-        num_classes=10,
+        num_classes=config["num_classes"],
         zero_init_residual=config["zero_init_residual"],
     )
     model.to(device)

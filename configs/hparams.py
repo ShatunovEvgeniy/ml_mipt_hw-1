@@ -4,4 +4,5 @@ config = dict(
     weight_decay=0.01,
     epochs=2,
     zero_init_residual=False,
+    num_classes=10,
 )
