@@ -3,6 +3,7 @@ import os
 import pytest
 import torch
 
+from src.train import compute_accuracy
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 os.chdir(project_root)
@@ -23,3 +24,29 @@ def test_div_zero() -> None:
 def test_div_zero_python() -> None:
     with pytest.raises(ZeroDivisionError):
         1 / 0
+
+
+def test_accuracy():
+    preds = torch.randint(0, 2, size=(100,))
+    targets = preds.clone()
+
+    assert compute_accuracy(preds, targets) == 1.0
+
+    preds = torch.tensor([1, 2, 3, 0, 0, 0])
+    targets = torch.tensor([1, 2, 3, 4, 5, 6])
+
+    assert compute_accuracy(preds, targets) == 0.5
+
+
+@pytest.mark.parametrize(
+    "preds,targets,result",
+    [
+        (torch.tensor([1, 2, 3]), torch.tensor([1, 2, 3]), 1.0),
+        (torch.tensor([1, 2, 3]), torch.tensor([0, 0, 0]), 0.0),
+        (torch.tensor([1, 2, 3]), torch.tensor([1, 2, 0]), 2 / 3),
+    ],
+)
+def test_accuracy_parametrized(preds, targets, result):
+    assert torch.allclose(
+        compute_accuracy(preds, targets), torch.tensor([result]), rtol=0, atol=1e-5
+    )
