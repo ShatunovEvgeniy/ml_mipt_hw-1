@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 
+from tqdm import tqdm, trange
 import wandb
 from typing import List, Tuple
 
@@ -58,6 +59,37 @@ def config_train_process(
     return train_loader, test_loader, device, model, criterion, optimizer
 
 
+def train_one_epoch(
+    images: torch.Tensor,
+    labels: torch.Tensor,
+    model: nn.Module,
+    criterion: nn.Module,
+    optimizer: optim.Optimizer,
+    device: torch.device,
+) -> torch.Tensor:
+    """
+    Train one epoch. Part of the train cycle.
+
+    :param images: Images for predictions.
+    :param labels: Right labels for each image from images.
+    :param model: Training model.
+    :param criterion: Loss function.
+    :param optimizer: Optimizer.
+    :param device: Device: "cpu", "cuda".
+    :return: Loss tensor.
+    """
+    images = images.to(device)
+    labels = labels.to(device)
+
+    outputs = model(images)
+    loss = criterion(outputs, labels)
+
+    loss.backward()
+    optimizer.step()
+    optimizer.zero_grad()
+    return loss
+
+
 def train(train_dataset: Dataset, test_dataset: Dataset) -> None:
     """
     Main function for model training.
@@ -71,3 +103,7 @@ def train(train_dataset: Dataset, test_dataset: Dataset) -> None:
         config_train_process(train_dataset, test_dataset, device)
     )
     wandb.watch(model)
+
+    for epoch in trange(config["epochs"]):
+        for i, (images, labels) in enumerate(tqdm(train_loader)):
+            train_one_epoch(images, labels, model, criterion, optimizer, device)
