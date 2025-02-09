@@ -1,12 +1,5 @@
-web_server/.idea
 /.idea
-web_server/src/static
-web_server/src/python_imports
-web_server/src/models
-web_server/src/tools
-cpp_dev/.vscode
-cpp_dev/build
-cpp_dev/import
+/data
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
