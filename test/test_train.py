@@ -1,3 +1,4 @@
+import os
 import pytest
 import torch
 import torch.nn as nn
@@ -5,7 +6,7 @@ import torch.optim as optim
 from torch.utils.data import Dataset
 from typing import Tuple
 
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from src.prepare_data import download_data, prepare_data
 from src import train
@@ -133,3 +134,55 @@ def test_estimate_current_state_validity(device_name, prepare_dataset):
         metrics["train_loss"], torch.Tensor
     ), "train_loss is not a torch.Tensor"
     assert metrics["train_loss"] == loss, "Loss was changed inside the function"
+
+
+class MockModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.linear = nn.Linear(10, 2)
+
+    def forward(self, x):
+        return self.linear(x)
+
+
+def generate_dummy_model():
+    # Create a mock model for testing purposes
+    model = MockModel()
+    model.linear.weight.data.fill_(0.5)  # Set some specific weights
+    model.linear.bias.data.fill_(0.25)
+    return model
+
+
+def test_save_model(tmpdir):
+    model = generate_dummy_model()
+    path = os.path.join(
+        tmpdir, "model.pt"
+    )  # Path to save the model weights (in the temporary directory)
+
+    # Mock wandb to avoid actual wandb calls during testing
+    with patch("wandb.run") as mock_wandb_run:
+        mock_wandb_run.id = "mock_run_id"
+        mock_wandb_run.dir = "mock_dir"
+
+        train.save_model(model, path)
+
+        # 1. Check if the path exists
+        assert os.path.exists(path), "File doesn't exists"
+
+        # 2. Load the saved weights and compare them to the original weights
+        loaded_model = generate_dummy_model()
+        loaded_model.load_state_dict(torch.load(path))
+
+        # Check similarity of weights
+        assert torch.allclose(model.linear.weight.data, loaded_model.linear.weight.data)
+        assert torch.allclose(model.linear.bias.data, loaded_model.linear.bias.data)
+
+        # 3. Verify that the run_id.txt file was created and contains the correct run ID
+        run_id_path = "run_id.txt"
+        assert os.path.exists(run_id_path)
+
+        with open(run_id_path, "r") as f:
+            run_id = f.read().strip()
+        assert run_id == "mock_run_id"
+
+        os.remove(run_id_path)
