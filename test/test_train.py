@@ -76,3 +76,32 @@ def test_train_one_epoch(device_name, prepare_one_epoch_train):
 
     # Check the output of train function
     assert loss == criterion.return_value, "Wrong output of train function"
+
+
+def test_compute_accuracy():
+    preds = torch.randint(0, 2, size=(100,))
+    targets = preds.clone()
+
+    assert train.compute_accuracy(preds, targets) == 1.0
+
+    preds = torch.tensor([1, 2, 3, 0, 0, 0])
+    targets = torch.tensor([1, 2, 3, 4, 5, 6])
+
+    assert train.compute_accuracy(preds, targets) == 0.5
+
+
+@pytest.mark.parametrize(
+    "preds,targets,result",
+    [
+        (torch.tensor([1, 2, 3]), torch.tensor([1, 2, 3]), 1.0),
+        (torch.tensor([1, 2, 3]), torch.tensor([0, 0, 0]), 0.0),
+        (torch.tensor([1, 2, 3]), torch.tensor([1, 2, 0]), 2 / 3),
+    ],
+)
+def test_compute_accuracy_parametrized(preds, targets, result):
+    assert torch.allclose(
+        train.compute_accuracy(preds, targets),
+        torch.tensor([result]),
+        rtol=0,
+        atol=1e-5,
+    )
