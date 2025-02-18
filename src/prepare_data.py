@@ -15,7 +15,7 @@ def download_data() -> None:
     return
 
 
-def prepare_data() -> Tuple[Dataset, Dataset]:
+def prepare_data(path="../data/CIFAR10") -> Tuple[Dataset, Dataset]:
     """
     Initialize CIFAR10 test and train data with normalized tensors.
 
@@ -29,19 +29,18 @@ def prepare_data() -> Tuple[Dataset, Dataset]:
     )
 
     train_dataset = CIFAR10(
-        root="CIFAR10/train",
+        root=path + "/train",
         train=True,
         transform=transform,
         download=False,
     )
 
     test_dataset = CIFAR10(
-        root="CIFAR10/test",
+        root=path + "/test",
         train=False,
         transform=transform,
         download=False,
     )
-
     return train_dataset, test_dataset
 
 
