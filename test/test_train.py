@@ -105,3 +105,29 @@ def test_compute_accuracy_parametrized(preds, targets, result):
         rtol=0,
         atol=1e-5,
     )
+
+
+@pytest.mark.parametrize(["device_name"], [["cpu"], ["cuda"]])
+def test_estimate_current_state_validity(device_name, prepare_dataset):
+    # Prepare estimation
+    device = torch.device(device_name)
+    loss = torch.tensor(0.5)
+
+    train_dataset, test_dataset = prepare_dataset
+    train_loader, test_loader, model, criterion, optimizer = train.config_train_process(
+        train_dataset, test_dataset, device
+    )
+
+    # Estimate
+    metrics = train.estimate_current_state(test_loader, device, model, loss)
+
+    # Check validity
+    assert "test_acc" in metrics, "test_acc is not in metrics"
+    assert "train_loss" in metrics, "train_loss is not in metrics"
+    assert isinstance(
+        metrics["test_acc"], torch.Tensor
+    ), "test_acc is not a torch.Tensor"
+    assert isinstance(
+        metrics["train_loss"], torch.Tensor
+    ), "train_loss is not a torch.Tensor"
+    assert metrics["train_loss"] == loss, "Loss was changed inside the function"
