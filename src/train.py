@@ -139,15 +139,18 @@ def save_model(model: nn.Module, path="../weights/model.pt") -> None:
         print(wandb.run.id, file=f)
 
 
-def train(train_dataset: Dataset, test_dataset: Dataset) -> None:
+def train(train_dataset: Dataset, test_dataset: Dataset, device_name="cuda") -> None:
     """
     Main function for model training.
 
     :param train_dataset: Dataset for train.
     :param test_dataset: Dataset for test.
+    :param device_name: Name of device for calculation: "cuda" or "cpu".
     :return: None.
     """
-    device = torch.device("cuda")
+    device = torch.device(
+        device_name if torch.cuda.is_available() and device_name == "cuda" else "cpu"
+    )
     train_loader, test_loader, model, criterion, optimizer = config_train_process(
         train_dataset, test_dataset, device
     )

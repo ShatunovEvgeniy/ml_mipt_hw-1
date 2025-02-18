@@ -47,7 +47,9 @@ def prepare_one_epoch_train():
 
 @pytest.mark.parametrize(["device_name"], [["cpu"], ["cuda"]])
 def test_train_one_epoch(device_name, prepare_one_epoch_train):
-    device = torch.device(device_name)
+    device = torch.device(
+        device_name if torch.cuda.is_available() and device_name == "cuda" else "cpu"
+    )
     images, labels, model, criterion, optimizer = prepare_one_epoch_train
     loss = train.train_one_epoch(images, labels, model, criterion, optimizer, device)
 
@@ -113,7 +115,9 @@ def test_compute_accuracy_parametrized(preds, targets, result):
 @pytest.mark.parametrize(["device_name"], [["cpu"], ["cuda"]])
 def test_estimate_current_state_validity(device_name, prepare_dataset):
     # Prepare estimation
-    device = torch.device(device_name)
+    device = torch.device(
+        device_name if torch.cuda.is_available() and device_name == "cuda" else "cpu"
+    )
     loss = torch.tensor(0.5)
 
     train_dataset, test_dataset = prepare_dataset
