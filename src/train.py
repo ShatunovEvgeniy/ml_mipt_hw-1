@@ -11,6 +11,9 @@ from typing import Tuple, Dict
 from configs.hparams import config
 
 
+wandb.init(config=config, project="effdl_example", name="baseline")
+
+
 def config_train_process(
     train_dataset: Dataset, test_dataset: Dataset, device: torch.device
 ) -> Tuple[DataLoader, DataLoader, nn.Module, nn.Module, optim.Optimizer]:
@@ -168,3 +171,4 @@ def train(train_dataset: Dataset, test_dataset: Dataset, device_name="cuda") -> 
                 )
 
     save_model(model)
+    wandb.finish()
