@@ -11,18 +11,6 @@ from typing import List, Tuple, Dict
 from configs.hparams import config
 
 
-def compute_accuracy(preds: List[torch.Tensor], targets: List[torch.Tensor]) -> float:
-    """
-    Compute accuracy which equals part of right answers.
-
-    :param preds: Predictions of a model.
-    :param targets: Right answers.
-    :return: Accuracy as float.
-    """
-    result = (targets == preds).float().mean()
-    return result
-
-
 def config_train_process(
     train_dataset: Dataset, test_dataset: Dataset, device: torch.device
 ) -> Tuple[DataLoader, DataLoader, nn.Module, nn.Module, optim.Optimizer]:
@@ -57,6 +45,18 @@ def config_train_process(
     )
 
     return train_loader, test_loader, model, criterion, optimizer
+
+
+def compute_accuracy(preds: List[torch.Tensor], targets: List[torch.Tensor]) -> float:
+    """
+    Compute accuracy which equals part of right answers.
+
+    :param preds: Predictions of a model.
+    :param targets: Right answers.
+    :return: Accuracy as float.
+    """
+    result = (targets == preds).float().mean()
+    return result
 
 
 def estimate_current_state(
