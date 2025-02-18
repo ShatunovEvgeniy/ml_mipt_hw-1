@@ -2,6 +2,7 @@ torch
 torchvision
 tqdm
 pytest
+pytest-cov
 wandb
 urllib3
 dvc
