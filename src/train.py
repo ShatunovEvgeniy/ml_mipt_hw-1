@@ -25,14 +25,14 @@ def compute_accuracy(preds: List[torch.Tensor], targets: List[torch.Tensor]) -> 
 
 def config_train_process(
     train_dataset: Dataset, test_dataset: Dataset, device: torch.device
-) -> Tuple[DataLoader, DataLoader, torch.device, nn.Module, nn.Module, optim.Optimizer]:
+) -> Tuple[DataLoader, DataLoader, nn.Module, nn.Module, optim.Optimizer]:
     """
     Config several objects for training process: data loaders, model, loss function and optimizer.
 
     :param train_dataset: Dataset for train.
     :param test_dataset: Dataset for test.
     :param device: Device: "cpu", "cuda".
-    :return:
+    :return: Data loaders, model, loss function and optimizer.
     """
     train_loader = torch.utils.data.DataLoader(
         dataset=train_dataset, batch_size=config["batch_size"], shuffle=True
@@ -56,7 +56,7 @@ def config_train_process(
         weight_decay=config["weight_decay"],
     )
 
-    return train_loader, test_loader, device, model, criterion, optimizer
+    return train_loader, test_loader, model, criterion, optimizer
 
 
 def train_one_epoch(
@@ -99,8 +99,8 @@ def train(train_dataset: Dataset, test_dataset: Dataset) -> None:
     :return: None.
     """
     device = torch.device("cuda")
-    train_loader, test_loader, device, model, criterion, optimizer = (
-        config_train_process(train_dataset, test_dataset, device)
+    train_loader, test_loader, model, criterion, optimizer = config_train_process(
+        train_dataset, test_dataset, device
     )
     wandb.watch(model)
 
