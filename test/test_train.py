@@ -2,6 +2,8 @@ import pytest
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.utils.data import Dataset
+from typing import Tuple
 
 from unittest.mock import Mock
 
@@ -10,7 +12,7 @@ from src import train
 
 
 @pytest.fixture
-def prepare_dataset():
+def prepare_dataset() -> Tuple[Dataset, Dataset]:
     download_data()
     return prepare_data()
 
