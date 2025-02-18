@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader, Dataset
 
 from tqdm import tqdm, trange
 import wandb
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 from configs.hparams import config
 
@@ -59,6 +59,41 @@ def config_train_process(
     return train_loader, test_loader, model, criterion, optimizer
 
 
+def estimate_current_state(
+    test_loader: DataLoader,
+    device: torch.device,
+    model: nn.Module,
+    loss: torch.Tensor,
+) -> Dict[str, torch.Tensor]:
+    """
+    Calculate metrics for current state of training.
+
+    :param test_loader: Data loader for test data.
+    :param device: Device: "cpu", "cuda".
+    :param model: Training model.
+    :param loss: Loss tensor for current state.
+    :return: Dictionary for wandb: metrics = {'test_acc': accuracy, 'train_loss': loss}.
+    """
+    all_preds = []
+    all_labels = []
+
+    for test_images, test_labels in test_loader:
+        test_images = test_images.to(device)
+        test_labels = test_labels.to(device)
+
+        with torch.inference_mode():
+            outputs = model(test_images)
+            preds = torch.argmax(outputs, 1)
+
+            all_preds.append(preds)
+            all_labels.append(test_labels)
+
+    accuracy = compute_accuracy(torch.cat(all_preds), torch.cat(all_labels))
+
+    metrics = {"test_acc": accuracy, "train_loss": loss}
+    return metrics
+
+
 def train_one_epoch(
     images: torch.Tensor,
     labels: torch.Tensor,
@@ -106,4 +141,11 @@ def train(train_dataset: Dataset, test_dataset: Dataset) -> None:
 
     for epoch in trange(config["epochs"]):
         for i, (images, labels) in enumerate(tqdm(train_loader)):
-            train_one_epoch(images, labels, model, criterion, optimizer, device)
+            loss = train_one_epoch(images, labels, model, criterion, optimizer, device)
+
+            if i % 100 == 0:
+                metrics = estimate_current_state(test_loader, device, model, loss)
+                wandb.log(
+                    metrics,
+                    step=epoch * len(train_dataset) + (i + 1) * config["batch_size"],
+                )
