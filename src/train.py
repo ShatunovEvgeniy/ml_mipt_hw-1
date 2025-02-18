@@ -125,6 +125,20 @@ def train_one_epoch(
     return loss
 
 
+def save_model(model: nn.Module, path="../weights/model.pt") -> None:
+    """
+    Save weights of trained model and wandb info.
+
+    :param model: Trained model.
+    :param path: Path with a name to save weights.
+    :return: None.
+    """
+    torch.save(model.state_dict(), path)
+
+    with open("run_id.txt", "w+") as f:
+        print(wandb.run.id, file=f)
+
+
 def train(train_dataset: Dataset, test_dataset: Dataset) -> None:
     """
     Main function for model training.
@@ -149,3 +163,5 @@ def train(train_dataset: Dataset, test_dataset: Dataset) -> None:
                     metrics,
                     step=epoch * len(train_dataset) + (i + 1) * config["batch_size"],
                 )
+
+    save_model(model)
