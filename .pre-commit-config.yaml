@@ -21,7 +21,7 @@ repos:
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
-        args: [feat, fix, test, docs, chore, style]
+        args: [feat, fix, test, docs, chore, style, refactor]
 
   # See https://docs.astral.sh/ruff/ for more info.
   - repo: https://github.com/astral-sh/ruff-pre-commit
