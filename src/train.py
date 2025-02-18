@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader, Dataset
 
 from tqdm import tqdm, trange
 import wandb
-from typing import List, Tuple, Dict
+from typing import Tuple, Dict
 
 from configs.hparams import config
 
@@ -47,7 +47,7 @@ def config_train_process(
     return train_loader, test_loader, model, criterion, optimizer
 
 
-def compute_accuracy(preds: List[torch.Tensor], targets: List[torch.Tensor]) -> float:
+def compute_accuracy(preds: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
     """
     Compute accuracy which equals part of right answers.
 
