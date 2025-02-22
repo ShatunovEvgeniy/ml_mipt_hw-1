@@ -1,0 +1,24 @@
+stages:
+  prepare_data:
+    cmd: python src/prepare_data.py
+    deps:
+    - src/prepare_data.py
+    outs:
+    - data/CIFAR10
+  train:
+    cmd: python src/train.py
+    deps:
+    - data/CIFAR10
+    - configs/hparams.py
+    - src/train.py
+    outs:
+    - weights/model.pt
+  compute_metrics:
+    cmd: python src/compute_metrics.py
+    deps:
+    - data/CIFAR10
+    - src/compute_metrics.py
+    - weights/model.pt
+    metrics:
+    - final_metrics.json:
+        cache: false
