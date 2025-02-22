@@ -11,9 +11,6 @@ from typing import Tuple, Dict
 from configs.hparams import config
 
 
-wandb.init(config=config, project="effdl_example", name="baseline")
-
-
 def config_train_process(
     train_dataset: Dataset, test_dataset: Dataset, device: torch.device
 ) -> Tuple[DataLoader, DataLoader, nn.Module, nn.Module, optim.Optimizer]:
@@ -128,7 +125,7 @@ def train_one_epoch(
     return loss
 
 
-def save_model(model: nn.Module, path="../weights/model.pt") -> None:
+def save_model(model: nn.Module, path="weights/model.pt") -> None:
     """
     Save weights of trained model and wandb info.
 
@@ -142,15 +139,24 @@ def save_model(model: nn.Module, path="../weights/model.pt") -> None:
         print(wandb.run.id, file=f)
 
 
-def train(train_dataset: Dataset, test_dataset: Dataset, device_name="cuda") -> None:
+def train_model(
+    train_dataset: Dataset,
+    test_dataset: Dataset,
+    device_name="cuda",
+    path="weights/model.pt",
+    run="release",
+) -> None:
     """
     Main function for model training.
 
     :param train_dataset: Dataset for train.
     :param test_dataset: Dataset for test.
     :param device_name: Name of device for calculation: "cuda" or "cpu".
+    :param path: Path to save model's weights and wandb info.
+    :param run: Name of wandb session.
     :return: None.
     """
+    wandb.init(config=config, project="ML Homework-1", name=run)
     device = torch.device(
         device_name if torch.cuda.is_available() and device_name == "cuda" else "cpu"
     )
@@ -170,5 +176,5 @@ def train(train_dataset: Dataset, test_dataset: Dataset, device_name="cuda") -> 
                     step=epoch * len(train_dataset) + (i + 1) * config["batch_size"],
                 )
 
-    save_model(model)
+    save_model(model, path)
     wandb.finish()
