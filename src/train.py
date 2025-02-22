@@ -9,6 +9,7 @@ import wandb
 from typing import Tuple, Dict
 
 from configs.hparams import config
+from src.prepare_data import prepare_data
 
 
 def config_train_process(
@@ -157,6 +158,7 @@ def train_model(
     :return: None.
     """
     wandb.init(config=config, project="ML Homework-1", name=run)
+    # if run == "test":
     device = torch.device(
         device_name if torch.cuda.is_available() and device_name == "cuda" else "cpu"
     )
@@ -178,3 +180,8 @@ def train_model(
 
     save_model(model, path)
     wandb.finish()
+
+
+if __name__ == "__main__":
+    train_dataset, test_dataset = prepare_data()
+    train_model(train_dataset, test_dataset)
