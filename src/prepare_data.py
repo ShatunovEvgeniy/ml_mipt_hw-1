@@ -10,8 +10,8 @@ def download_data() -> None:
 
     :return: None.
     """
-    CIFAR10("../data/CIFAR10/train", download=True)
-    CIFAR10("../data/CIFAR10/test", download=True)
+    CIFAR10("data/CIFAR10/train", download=True)
+    CIFAR10("data/CIFAR10/test", download=True)
     return
 
 
