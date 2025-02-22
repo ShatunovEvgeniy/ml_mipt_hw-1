@@ -161,11 +161,9 @@ def generate_dummy_model():
     return model
 
 
-def test_save_model(tmpdir):
+def test_save_model():
     model = generate_dummy_model()
-    path = os.path.join(
-        tmpdir, "model.pt"
-    )  # Path to save the model weights (in the temporary directory)
+    path = "weights/model.pt"  # Path to save the model weights
 
     # Mock wandb to avoid actual wandb calls during testing
     with patch("wandb.run") as mock_wandb_run:
