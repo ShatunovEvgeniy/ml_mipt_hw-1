@@ -6,6 +6,9 @@ __pycache__/
 *$py.class
 .vscode/
 /wandb
+/.dvc
+dvc.lock
+/weights
 
 *.dump
 # C extensions
@@ -43,7 +46,7 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
-htmlcov/
+# htmlcov/
 .tox/
 .nox/
 .coverage
