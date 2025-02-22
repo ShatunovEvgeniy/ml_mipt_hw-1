@@ -1,4 +1,4 @@
-# ml_mipt_hw
+# ML MIPT homework 1
 
 # Окружение
 
