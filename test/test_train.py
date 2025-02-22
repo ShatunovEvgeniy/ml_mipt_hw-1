@@ -192,3 +192,25 @@ def test_save_model():
         assert run_id == "mock_run_id"
 
         os.remove(run_id_path)
+
+
+@pytest.mark.parametrize(["device_name"], [["cuda"]])
+def test_training(device_name, prepare_dataset):
+    train_dataset, test_dataset = prepare_dataset
+    device = torch.device(
+        device_name if torch.cuda.is_available() and device_name == "cuda" else "cpu"
+    )
+    train_loader, test_loader, model, criterion, optimizer = train.config_train_process(
+        train_dataset, test_dataset, device
+    )
+    path = "weights/model.pt"  # Path to save the model weights
+    train.train_model(train_dataset, test_dataset, device_name, path, "test")
+
+    model.load_state_dict(torch.load(path))
+    model.to(device)
+
+    try:
+        img_size = 32
+        model(torch.rand(32, 3, img_size, img_size).to(device))
+    except Exception as e:
+        pytest.fail(f"Model loading failed with exception: {e}")
