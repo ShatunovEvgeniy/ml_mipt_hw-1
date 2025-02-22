@@ -30,3 +30,25 @@ pip-compile requirements.in
 pip install pip-tools
 pip-sync requirements.txt
 ```
+
+# Запуск пайплайна
+
+При первом запуске, используйте сперва:
+```bash
+dvc init
+```
+После этого воспользуйтесь командой:
+```bash
+dvc repro
+```
+
+# Тестирование
+
+Для запуска тестов с покрытием в корне репозитория запустите:
+```bash
+pytest test/test_train.py --cov=src --cov-report html --cov-report term
+```
+После этого откройте в браузере файл:
+```
+htmlcov/index.html
+```
