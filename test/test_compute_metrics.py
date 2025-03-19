@@ -12,4 +12,4 @@ def test_compute_metrics():
 
     with open(path, "r") as f:
         metrics = json.load(f)
-    assert metrics["accuracy"] is not float
+    assert metrics["accuracy"] is float
