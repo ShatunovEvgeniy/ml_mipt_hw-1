@@ -46,7 +46,7 @@ dvc repro
 
 Для запуска тестов с покрытием в корне репозитория запустите:
 ```bash
-pytest test/test_train.py --cov=src --cov-report html --cov-report term
+pytest test --cov=src --cov-report html --cov-report term
 ```
 После этого откройте в браузере файл:
 ```

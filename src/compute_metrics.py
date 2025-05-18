@@ -8,7 +8,7 @@ from torchvision.models import resnet18
 from configs.hparams import config
 
 
-def compute_metrics():
+def compute_metrics(path="weights/model.pt"):
     transform = transforms.Compose(
         [
             transforms.ToTensor(),
@@ -17,7 +17,7 @@ def compute_metrics():
     )
 
     test_dataset = CIFAR10(
-        root="data/CIFAR10/test",
+        root="../data/CIFAR10/test",
         train=False,
         transform=transform,
         download=False,
@@ -28,9 +28,9 @@ def compute_metrics():
     )
 
     device = torch.device("cuda")
-
     model = resnet18(pretrained=False, num_classes=config["num_classes"])
-    model.load_state_dict(torch.load("weights/model.pt"))
+    state_dict = torch.load(path)
+    model.load_state_dict(state_dict)
     model.to(device)
 
     correct = 0.0
